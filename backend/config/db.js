@@ -1,7 +1,7 @@
 // MySQL 数据库连接配置
 const mysql = require('mysql2/promise');
 
-// 连接池配置（按本机实际情况修改密码）
+// 创建连接池（按本机实际情况修改密码）
 const pool = mysql.createPool({
   host: 'localhost',
   port: 3306,
