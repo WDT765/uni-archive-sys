@@ -1,4 +1,5 @@
-// 认证模块路由：登录接口
+// 认证模块路由（前缀 /api/auth）
+// 仅包含登录接口，token 有效期 10 分钟
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -6,21 +7,21 @@ const { query } = require('../config/db');
 const { success, fail } = require('../utils/result');
 const { JWT_SECRET } = require('../middleware/auth');
 
-// 登录接口 POST /api/login
-// 入参：{ username, password }，返回：{ token, role }
+// ==================== 登录 POST /api/auth/login ====================
+// 不需要 token 鉴权
+// 入参：username、password，成功返回 { token, id, username }，token 有效期 10 分钟
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body || {};
 
-    // 1. 参数校验
+    // 参数校验
     if (!username || !password) {
       return fail(res, '用户名和密码不能为空', 400);
     }
 
-    // 2. 查询用户表验证账号密码
-    // 说明：init.sql 中密码为明文存储（测试数据），这里直接比对
+    // 查询用户表验证账号密码（密码明文对比，方便调试，不使用 bcrypt）
     const [rows] = await query(
-      'SELECT id, username, password, real_name FROM `user` WHERE username = ? LIMIT 1',
+      'SELECT id, username, password FROM `user` WHERE username = ? LIMIT 1',
       [username]
     );
 
@@ -29,18 +30,16 @@ router.post('/login', async (req, res) => {
       return fail(res, '用户名或密码错误', 400);
     }
 
-    // 3. 确定角色：用户表无角色字段，约定 username 为 admin 即管理员，其余为普通用户
-    const role = user.username === 'admin' ? 'admin' : 'user';
-
-    // 4. 签发 JWT（有效期 24 小时）
+    // 签发 JWT，有效期 10 分钟
     const token = jwt.sign(
-      { id: user.id, username: user.username, role },
+      { id: user.id, username: user.username },
       JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '10m' }
     );
 
-    return success(res, { token, role }, '登录成功');
+    return success(res, { token, id: user.id, username: user.username }, '登录成功');
   } catch (err) {
+    // 捕获数据库等异常，统一返回
     console.error('登录异常:', err);
     return fail(res, '服务器异常', 500);
   }

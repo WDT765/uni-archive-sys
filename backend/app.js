@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 const archiveRoutes = require('./routes/archiveRoutes');
 const { fail } = require('./utils/result');
 
@@ -17,8 +18,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ---------- 路由注册 ----------
-// 登录接口（无需鉴权）
-app.use('/api', authRoutes);
+// 认证相关接口：登录（无需鉴权）
+app.use('/api/auth', authRoutes);
+
+// 用户管理接口：新增/查询/修改/删除（内部统一token鉴权）
+app.use('/api/user', userRoutes);
 
 // 档案 CRUD 接口（内部含 JWT 鉴权与角色校验中间件）
 app.use('/api/archive', archiveRoutes);
