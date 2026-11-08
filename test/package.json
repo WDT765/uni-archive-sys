@@ -1,0 +1,14 @@
+{
+  "name": "uni-archive-sys-stage1-login-test",
+  "version": "1.0.0",
+  "private": true,
+  "description": "阶段1登录与路由守卫 Playwright 自动化测试（独立脚本，仅位于 test 目录）",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.45.0"
+  }
+}
