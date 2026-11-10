@@ -1,11 +1,55 @@
 <template>
-  <!-- 档案列表页骨架：空白页面，表格与增删改查交互待后续开发 -->
-  <div class="archive-list-page">
-    <h2>教学档案列表</h2>
+  <div class="container">
+    <h2>档案列表</h2>
+    <div class="search">
+      <input v-model="keyword" placeholder="搜索档案名称" />
+      <button>查询</button>
+      <button>新增档案</button>
+    </div>
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>档案名称</th>
+          <th>创建时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in tableData" :key="item.id">
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.time }}</td>
+          <td>
+            <button>编辑</button>
+            <button>删除</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script setup>
-// TODO 业务逻辑待填充：调用 GET /api/archive/list 查询列表，
-// 以及新增/修改/删除档案（POST /api/archive/add 等）
+import { ref } from 'vue'
+const keyword = ref('')
+const tableData = ref([
+  { id: 1, name: "学生档案001", time: "2026-11-01" },
+  { id: 2, name: "学生档案002", time: "2026-11-02" },
+  { id: 3, name: "学生档案003", time: "2026-11-03" },
+])
 </script>
+
+<style scoped>
+.container {
+  width: 900px;
+  margin: 40px auto;
+}
+.search {
+  margin-bottom: 16px;
+}
+button {
+  margin-left: 8px;
+  padding: 4px 10px;
+}
+</style>
